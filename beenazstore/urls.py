@@ -23,7 +23,9 @@ from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('ckeditor/', include('ckeditor_uploader.urls')),
     path('', views.index, name='home'),
-    path('store/', include('store.urls'), name='store'),  # Include store app URLs  
+    path('store/', include('store.urls'), name='store'),
+    path('cart/', include('cart.urls'), name='cart'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

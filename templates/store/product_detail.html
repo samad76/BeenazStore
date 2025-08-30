@@ -12,7 +12,7 @@
 				<aside class="col-md-6">
 					<article class="gallery-wrap">
 						<div class="img-big-wrap mainImage">
-							<center><img src="{{ single_product.images.url }}"></center>
+							<center><img src="{{ single_product_images.first.image.url }}"></center>
 						</div> <!-- img-big-wrap.// -->
 
 					</article> <!-- gallery-wrap .end// -->
@@ -27,20 +27,24 @@
 				</aside>
 				<main class="col-md-6 border-left">
 
-					<form action="{% url 'add_cart' single_product.id %}" method="POST">
+					<form action="{% url 'add_to_cart' single_product.id %}" method="POST">
 						{% csrf_token %}
 						<article class="content-body">
 
-							<h2 class="title">{{ single_product.product_name }}</h2>
+							<h2 class="title">{{ single_product.title }}</h2>
 							<div class="rating-star">
+							
+									{% if single_product.rating %}
 								<span>
-									<i class="fa fa-star{% if single_product.averageReview < 0.5 %}-o{% elif single_product.averageReview >= 0.5 and single_product.averageReview < 1 %}-half-o {% endif %}" aria-hidden="true"></i>
-									<i class="fa fa-star{% if single_product.averageReview < 1.5 %}-o{% elif single_product.averageReview >= 1.5 and single_product.averageReview < 2 %}-half-o {% endif %}" aria-hidden="true"></i>
-									<i class="fa fa-star{% if single_product.averageReview < 2.5 %}-o{% elif single_product.averageReview >= 2.5 and single_product.averageReview < 3 %}-half-o {% endif %}" aria-hidden="true"></i>
-									<i class="fa fa-star{% if single_product.averageReview < 3.5 %}-o{% elif single_product.averageReview >= 3.5 and single_product.averageReview < 4 %}-half-o {% endif %}" aria-hidden="true"></i>
-									<i class="fa fa-star{% if single_product.averageReview < 4.5 %}-o{% elif single_product.averageReview >= 4.5 and single_product.averageReview < 5 %}-half-o {% endif %}" aria-hidden="true"></i>
-	<span>{{single_product.countReview}} reviews</span>
+									<i class="fa fa-star{% if single_product.rating < 0.5 %}-o{% elif single_product.rating >= 0.5 and single_product.rating < 1 %}-half-o {% endif %}" aria-hidden="true"></i>
+									<i class="fa fa-star{% if single_product.rating < 1.5 %}-o{% elif single_product.rating >= 1.5 and single_product.rating < 2 %}-half-o {% endif %}" aria-hidden="true"></i>
+									<i class="fa fa-star{% if single_product.rating < 2.5 %}-o{% elif single_product.rating >= 2.5 and single_product.rating < 3 %}-half-o {% endif %}" aria-hidden="true"></i>
+									<i class="fa fa-star{% if single_product.rating < 3.5 %}-o{% elif single_product.rating >= 3.5 and single_product.rating < 4 %}-half-o {% endif %}" aria-hidden="true"></i>
+									<i class="fa fa-star{% if single_product.rating < 4.5 %}-o{% elif single_product.rating >= 4.5 and single_product.rating < 5 %}-half-o {% endif %}" aria-hidden="true"></i>
+					<!-- <span>{{single_product.countReview}} reviews</span> -->
 									</span>
+									{% endif %}
+
 							</div>
 
 
@@ -48,22 +52,27 @@
 								<var class="price h4">$ {{single_product.price}}</var>
 							</div>
 								<div class="blog-content">
-								{{ single_product.description|safe }}
+								{{ single_product.description | safe }}
 								</div>
 
 
 							<hr>
-							<div class="row">
-								<div class="item-option-select">
-									<h6>Choose Color</h6>
-									<select name="color" class="form-control" required>
-										<option value="" disabled selected>Select</option>
-										{% for i in single_product.variation_set.colors %}
-										<option value="{{ i.variation_value | lower }}">{{ i.variation_value | capfirst }}</option>
-										{% endfor %}
-									</select>
+							{% if single_product.is_variant %}
+								{% if single_product_variations.color %}
+								<div class="row">
+							
+									<div class="item-option-select">
+										<h6>Choose Color</h6>
+										<select name="color" class="form-control" required>
+											<option value="" disabled selected>Select</option>
+											{% for i in single_product_variations.colors %}
+											<option value="{{ i.variation_value | lower }}">{{ i.variation_value | capfirst }}</option>
+											{% endfor %}
+										</select>
+									</div>
+
 								</div>
-							</div>
+								{% elif single_product_variations.size %}
 							<div class="row">
 								<div class="item-option-select">
 									<h6>Select Size</h6>
@@ -75,6 +84,21 @@
 									</select>
 								</div>
 							</div>
+							 
+							{% elif single_product_variations.flavor %}
+							<div class="row">
+								<div class="item-option-select">
+									<h6>Select Flavor</h6>
+									<select name="flavor" class="form-control">
+										<option value="" disabled selected>Select</option>
+										{% for i in single_product_variations.flavors %}
+										<option value="{{ i.variation_value | lower }}">{{ i.variation_value | capfirst }}</option>
+										{% endfor %}
+									</select>
+								</div>
+							{% endif %}
+
+						{% endif %}
 							<hr>
 							{% if single_product.stock <= 0 %}
 							<h5 class="text-danger">Out of Stock</h5>

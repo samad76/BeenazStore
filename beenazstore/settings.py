@@ -39,12 +39,20 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'ckeditor',
+    'modeltranslation',
     'ckeditor_uploader',
     'category',
     'accounts',
     'store',
+    'cart',
 
 ]
+
+LANGUAGES = (
+    ('en', 'English'),
+    ('ur', 'Urdu'),
+)
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -68,7 +76,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'category.context_processors.menu_links',  # Custom context processor for menu links
+                'category.context_processors.menu_links',
+                'cart.context_processors.counter',
+                  
             ],
         },
     },
@@ -137,10 +147,23 @@ CKEDITOR_UPLOAD_PATH = "uploads/"
 
 CKEDITOR_CONFIGS = {
     'default': {
-        'toolbar': 'full',
+        'toolbar': 'Full',
+    },
+    'custom': {
+        'toolbar': [
+            ['Bold', 'Italic', 'Underline'],
+            ['NumberedList', 'BulletedList'],
+            ['Link', 'Unlink'],
+            ['RemoveFormat', 'Source'],
+            ['JustifyLeft', 'JustifyCenter', 'JustifyRight'],
+            ['TextColor', 'BGColor'],
+            ['Font', 'FontSize'],
+            ['Maximize'],
+        ],
         'height': 300,
         'width': '100%',
-    },
+        'language': 'en',
+    }
 }
 
 # Default primary key field type

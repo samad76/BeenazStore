@@ -37,9 +37,23 @@
    				 {% endwith %}
 </a>
                 <figcaption class="info-wrap">
-                    <a href="./product-detail.html" class="title">{{ product.title }}</a>
-                    <div class="price mt-1">Rs.{{ product.discounted_price }}</div>
+                    <a href="{{ product.get_absolute_url }}" class="title">{{ product.title }}</a>
+                    <div class="justify-content-between">
+						<div class="text-decoration-line-through"><del>Rs.{{ product.price }}</del></div>
+						<div class="price">Rs.{{ product.discounted_price }}</div>
+							{% if product.stock <= 0 %}
+							<div class="text-danger text-center">Out of Stock</div>
+							{% else %}
+							<a href="{% url 'add_to_cart' product.id %}" class="btn btn-outline-warning btn-small rounded-pill"><i class="fas fa-plus"></i> <i class="fas fa-shopping-cart"></i></a>
+							{% endif %}
+					</div>	
                 </figcaption>
+				
+			</div> <!-- card.// -->
+			<div class="card-footer">
+				
+			
+				
             </div>
         </div>
         

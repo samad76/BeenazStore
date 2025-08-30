@@ -13,71 +13,176 @@
 		<aside class="col-md-6">
 <article class="gallery-wrap"> 
 	<div class="img-big-wrap mainImage">
-	   <center><img src="{{ single_product_images.first.image.url }}"></center>
+	   <center><img src="{{ single_product_images.first.image.url }}" alt="{{single_product.alt_text}}"></center>
 	</div> <!-- img-big-wrap.// -->
-	
-</article> <!-- gallery-wrap .end// -->
+	<ul class="img-thumbnail">
+		<li>
+			{% for i in single_product_images %}
+    		<a href="{{ i.image.url }}" class="img-fluid img-xs img-thumbnail" target="mainImage">
+        	<img src="{{ i.image.url }}" alt="{{ i.alt_text }}" class="img-thumbnail" style="width: 60px; height: 60px; object-fit: cover;">
+    		</a>
+			{% endfor %}
+		</li>
+	</ul> 
+			
+</article>
+					<!-- gallery-wrap .end// -->
+					 
 		</aside>
+		
 		<main class="col-md-6 border-left">
-<article class="content-body">
+<form id="addToCartForm" action="{% url 'add_to_cart' single_product.id %}" method="POST">
+	{% csrf_token %}
+	<article class="content-body">
+		<h2 class="title">{{ single_product.title }}</h2>
+			<div class="rating-star text-warning mb-3">
+					
+			{% if single_product.rating %}
+				<span>
+				<i class="fa fa-star{% if single_product.rating < 0.5 %}-o{% elif single_product.rating >= 0.5 and single_product.rating < 1 %}-half-o {% endif %}" aria-hidden="true"></i>
+				<i class="fa fa-star{% if single_product.rating < 1.5 %}-o{% elif single_product.rating >= 1.5 and single_product.rating < 2 %}-half-o {% endif %}" aria-hidden="true"></i>
+				<i class="fa fa-star{% if single_product.rating < 2.5 %}-o{% elif single_product.rating >= 2.5 and single_product.rating < 3 %}-half-o {% endif %}" aria-hidden="true"></i>
+				<i class="fa fa-star{% if single_product.rating < 3.5 %}-o{% elif single_product.rating >= 3.5 and single_product.rating < 4 %}-half-o {% endif %}" aria-hidden="true"></i>
+				<i class="fa fa-star{% if single_product.rating < 4.5 %}-o{% elif single_product.rating >= 4.5 and single_product.rating < 5 %}-half-o {% endif %}" aria-hidden="true"></i>
+				<!-- <span>{{single_product.countReview}} reviews</span> -->
+				</span>
+			{% endif %}
 
-<h2 class="title">{{ single_product.title }}</h2>
+			</div>
 
-<div class="mb-3"> 
+			<div class="mb-3">
+			{% if single_product.discounted_price %}
+			<div>
+				{% if single_product.discounted_price < single_product.price %}
+				<del class="price-old">Rs. {{single_product.price}}</del>
+				{% endif %}
+				<var class="price h4 text-warning">Rs. {{single_product.discounted_price}}</var>
+				{% else %}
+				<var class="price h4">Rs. {{single_product.price}}</var>
+				{% endif %}
+				{% if single_product.short_description %}
+				<p class="text-muted mt-2">{{ single_product.short_description|safe }}</p>
+				{% endif %}
+			</div>
 	
-	<var class="price h4">Rs. {{single_product.price}}</var> 
-</div> 
+<hr>
+{% if single_product.is_variant %}
+    {% regroup single_product_variations by variation_type as variant_groups %}
+    {% for group in variant_groups %}
+        <h2>{{ group.grouper|capfirst }}</h2>
+        <div class="item-option-select">
+            <h6>Choose {{ group.grouper|capfirst }}</h6>
+            <div class="btn-group btn-group-sm btn-group-toggle" data-toggle="buttons">
+                {% for variant in group.list %}
+                    {% if group.grouper == 'color' %}
+                        <label class="btn btn-light" for="color_{{ variant.id }}" style="margin-right: 5px;">
+                            <input type="radio" name="color" id="color_{{ variant.id }}" value="{{ variant.id }}">
+                            <span style="display:inline-block; width:20px; height:20px; background-color:{{ variant.color.hex_code }}; border-radius:50%; border:1px solid #ccc; vertical-align:middle; margin-right:5px;"></span>
+                            {{ variant.color.name|capfirst }}
+                            <img src="{{ variant.image.url }}" alt="{{ variant.color.name|capfirst }}" style="width: 30px; height: 30px; border-radius: 50%; margin-left: 5px;">
+                        </label>
+                    {% elif group.grouper == 'size' %}
+                        <label class="btn btn-light" for="size_{{ variant.id }}" style="margin-right: 5px;">
+                            <input type="radio" name="size" id="size_{{ variant.id }}" value="{{ variant.id }}">
+                            {{ variant.size.name|capfirst }}
+                            <img src="{{ variant.image.url }}" alt="{{ variant.size.name|capfirst }}" style="width: 30px; height: 30px; border-radius: 50%; margin-left: 5px;">
+                        </label>
+                    {% elif group.grouper == 'flavor' %}
+                        <label class="btn btn-light" for="flavor_{{ variant.id }}" style="margin-right: 5px;">
+                            <input type="radio" name="flavor" id="flavor_{{ variant.id }}" value="{{ variant.id }}">
+                            {{ variant.flavor.name|capfirst  }} 
+                            <img src="{{ variant.image.url }}" alt="{{ variant.flavor.name|capfirst }}" style="width: 30px; height: 30px; border-radius: 50%; margin-left: 5px;">
+                        </label>
+                    {% endif %}
+                    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    const groups = ['color', 'size', 'flavor'];
 
-<p>{{ single_product.description }}</p>
+    groups.forEach(group => {
+        const radios = document.querySelectorAll(`input[name="${group}"]`);
+        radios.forEach(radio => {
+            radio.addEventListener('change', function () {
+                // Remove 'active' from all labels in this group
+                radios.forEach(r => {
+                    const label = document.querySelector(`label[for="${r.id}"]`);
+                    if (label) label.classList.remove('active');
+                });
 
+                // Add 'active' to selected label
+                const selectedLabel = document.querySelector(`label[for="${this.id}"]`);
+                if (selectedLabel) selectedLabel.classList.add('active');
+            });
+        });
+    });
+});
+</script>
+
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+    <div id="variantMessage" class="text-danger mb-2" style="display:none;">Please select a variant before adding to cart.</div>
+{% endif %}
+								
 
 <hr>
-	<div class="row">
-		<div class="item-option-select">
-			<h6>Choose Color</h6>
-			<div class="btn-group btn-group-sm btn-group-toggle" data-toggle="buttons">
-			  <label class="btn btn-light">
-			    <input type="radio" name="radio_color"> Silver
-			  </label>
-			  <label class="btn btn-light">
-			    <input type="radio" name="radio_color" > Gray
-			  </label>
-			  <label class="btn btn-light active">
-			    <input type="radio" name="radio_color checked"> Gold
-			  </label>
-			  <label class="btn btn-light">
-			    <input type="radio" name="radio_color"> Black
-			  </label>
-			</div> 
-		</div>
-	</div> <!-- row.// -->
-	<div class="row">
-		<div class="item-option-select">
-			<h6>Select Size</h6>
-			<div class="btn-group btn-group-sm btn-group-toggle" data-toggle="buttons">
-			  <label class="btn btn-light">
-			    <input type="radio" name="radio_color"> S
-			  </label>
-			  <label class="btn btn-light active">
-			    <input type="radio" name="radio_color" checked> M
-			  </label>
-			  <label class="btn btn-light">
-			    <input type="radio" name="radio_color"> L
-			  </label>
-			  <label class="btn btn-light">
-			    <input type="radio" name="radio_color"> XL
-			  </label>
-			</div> 
-		</div>
-	</div> <!-- row.// -->
-	<hr>
 	{% if single_product.stock <= 0 %}
 		<h5 class="text-danger">Out of Stock</h5>
 	{% else %}
-		<button type="submit" class="btn  btn-primary"> <span class="text">Add to Cart</span> <i class="fas fa-shopping-cart"></i> </button>
+		<button type="submit" id="addToCartBtn" class="btn btn-primary"> <span class="text">Add to Cart</span> <i class="fas fa-shopping-cart"></i> </button>
 	{% endif %}
-	
+		<p id="variantMessage" >Please select a variant before adding to cart.</p>
 </article> <!-- product-info-aside .// -->
+</form>
+
+ <!-- {% if single_product.is_variant %}	```
+<script>
+	
+document.addEventListener('DOMContentLoaded', function() {
+   
+        var addToCartBtn = document.getElementById('addToCartBtn');
+        var form = document.getElementById('addToCartForm');
+        var variantMessage = document.getElementById('variantMessage');
+
+        function checkVariantSelected() {
+            var colorSelected = document.querySelectorAll('input[name="color"]:checked');
+            var sizeSelected = document.querySelectorAll('input[name="size"]:checked');
+            var flavorSelected = document.querySelectorAll('input[name="flavor"]:checked');
+			console.log(flavorSelected);
+            // If any variant group exists, require selection
+            var requireColor = document.querySelectorAll('input[name="color"]');
+            var requireSize = document.querySelectorAll('input[name="size"]');
+            var requireFlavor = document.querySelectorAll('input[name="flavor"]');
+            var valid = true;
+            if (requireColor.length > 0 && colorSelected.length === 0) valid = false;
+            if (requireSize.length > 0 && sizeSelected.length === 0) valid = false;
+            if (requireFlavor.length > 0 && flavorSelected.length === 0) valid = false;
+            return valid;
+        }
+
+        function toggleButton() {
+            if (checkVariantSelected()) {
+			    addToCartBtn.disabled = false;
+                variantMessage.style.display = 'none';
+            } else {
+                addToCartBtn.disabled = true;
+            }
+        }
+
+        form.addEventListener('change', toggleButton);
+        form.addEventListener('submit', function(e) {
+            if (!checkVariantSelected()) {
+                e.preventDefault();
+                variantMessage.style.display = 'block';
+            }
+        });
+
+        // Initial check
+        toggleButton();
+    
+});
+</script>	
+{% endif %}		 -->
 		</main> <!-- col.// -->
 	</div> <!-- row.// -->
 </div> <!-- card.// -->
@@ -87,6 +192,9 @@
 
 <div class="row">
 			<div class="col-md-9">
+				<div class="blog-content">
+				{{ single_product.description | safe }}			
+			</div>
 
 	<header class="section-heading">
 		<h3>Customer Reviews </h3>  
@@ -122,4 +230,6 @@
 <!-- ========================= SECTION CONTENT END// ========================= -->
 
 
+
 {% endblock %}
+
