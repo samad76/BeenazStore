@@ -51,14 +51,7 @@ $(document).ready(function() {
 
 {% include "includes/navbar.html" %}
 
-{% if messages %}
-  {% for message in messages %}
-    <div class="alert alert-warning mt-3">
-  		{{ message|safe }}
-	</div>
 
-  {% endfor %}
-{% endif %}
 {% block content %}
 
 

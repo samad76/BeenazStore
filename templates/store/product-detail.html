@@ -121,7 +121,8 @@ document.addEventListener('DOMContentLoaded', function () {
             </div>
         </div>
     {% endfor %}
-    <div id="variantMessage" class="text-danger mb-2" style="display:none;">Please select a variant before adding to cart.</div>
+   
+    
 {% endif %}
 								
 
@@ -130,8 +131,9 @@ document.addEventListener('DOMContentLoaded', function () {
 		<h5 class="text-danger">Out of Stock</h5>
 	{% else %}
 		<button type="submit" id="addToCartBtn" class="btn btn-primary"> <span class="text">Add to Cart</span> <i class="fas fa-shopping-cart"></i> </button>
+        {% include 'includes/alerts.html' %}
+
 	{% endif %}
-		<p id="variantMessage" >Please select a variant before adding to cart.</p>
 </article> <!-- product-info-aside .// -->
 </form>
 

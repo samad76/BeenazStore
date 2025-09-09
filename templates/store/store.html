@@ -154,9 +154,11 @@
 					</div> <!-- price-wrap.// -->
 				</div> <!-- fix-height.// -->
 				<div class="btn-group" role="group" aria-label="Basic example">
+				<a href="{% url 'buy_now' product.id %}" class="btn btn-outline-success "><i class="fas fa-shopping-bag"></i> Buy Now</a>
 				<a href="{% url 'add_to_cart' product.id %}" class="btn btn-outline-success "><i class="fas fa-plus"></i> <i class="fas fa-shopping-cart"></i></a>
-				<a href="{{ product.get_absolute_url }}" class="btn btn-outline-success">View Details </a>
-				
+				<a href="{{ product.get_absolute_url }}" class="btn btn-outline-success"><i class="fas fa fa-search"></i></a>
+
+
 			</figcaption>
 		</figure>
 	</div> <!-- col.// -->

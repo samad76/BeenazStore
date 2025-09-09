@@ -43,14 +43,17 @@
 					</div> <!-- form-group end.// -->
 					<div class="form-group col-md-6">
 						<label>Repeat password</label>
-            {{form.confirm_password}}
+           				 {{form.confirm_password}}
 					</div> <!-- form-group end.// -->
 				</div>
 			    <div class="form-group">
 			        <button type="submit" class="btn btn-primary btn-block"> Register  </button>
 			    </div> <!-- form-group// -->
-      {{ form.email.errors }}
-      {{ form.non_field_errors }}
+				<div class="alert alert-warning ">
+			{{ form.email.errors }}
+    		{{ form.non_field_errors }}
+
+				</div>
 			</form>
 		</article><!-- card-body.// -->
     </div> <!-- card .// -->

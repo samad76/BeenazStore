@@ -14,7 +14,7 @@
 <div class="card">
   <div class="card-body">
     <h4 class="card-title mb-4">Billing Address</h4>
-    <form action="{% url 'place_order' %}" method="POST">
+    <form action="#" method="POST">
       {% csrf_token %}
       <div class="form-row">
         <div class="col form-group">
@@ -89,15 +89,19 @@
       <tr>
       	<td>
       		<figure class="itemside align-items-center">
-      			<div class="aside"><img src="{{ cart_item.product.images.url }}" class="img-sm"></div>
+      			<div class="aside"><img src="{{ cart_item.product.images.first.image.url }}" class="img-sm"></div>
       			<figcaption class="info">
       				<a href="{{ cart_item.product.get_url }}" class="title text-dark">{{ cart_item.product.product_name }}</a>
       				<p class="text-muted small">
-      					{% if cart_item.variations.all %}
-      						{% for item in cart_item.variations.all %}
-      							{{ item.variation_category | capfirst }} : {{ item.variation_value | capfirst }} <br>
-      						{% endfor %}
-      					{% endif %}
+      					{% for variant in cart_item.variations.all %}
+						{% if variant.variation_type == 'color' %}
+							{{ variant.variation_type | capfirst }} : {{ variant.color.name | capfirst }}  <br>
+						{% elif variant.variation_type == 'size' %}
+							{{ variant.variation_type | capfirst }} : {{ variant.size.name | capfirst }}  <br>
+						{% elif variant.variation_type == 'flavor' %}
+						{{ variant.variation_type | capfirst }} : {{ variant.flavor.description | capfirst }} <br>
+						{% endif %}
+					{% endfor %}	
       				</p>
       			</figcaption>
       		</figure>
@@ -109,7 +113,11 @@
       	<td>
       		<div class="price-wrap">
       			<var class="price">$ {{ cart_item.sub_total }}</var>
-      			<small class="text-muted"> $ {{ cart_item.product.price }} each </small>
+            <!-- {% if cart_item.variations %}
+            <small class="text-muted"> Rs. {{ cart_item.variations.first.price }} each </small>
+            {% else %}
+      			<small class="text-muted"> Rs. {{ cart_item.product.discounted_price }} each </small>
+            {% endif %} -->
       		</div> <!-- price-wrap .// -->
       	</td>
 
