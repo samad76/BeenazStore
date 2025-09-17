@@ -46,9 +46,9 @@
                                 <div class="well">
                                     <ul class="list-unstyled mb0">
                                         <li><strong>Order</strong> #{{order_number}}</li>
-                                        <li><strong>Transaction ID</strong> {{transID}}</li>
+                                        <li><strong>Transaction ID</strong> {{order.payment.payment_id}}</li>
                                         <li><strong>Order Date:</strong> {{order.created_at}}</li>
-                                        <li><strong>Status:</strong> {{payment.status}}</li>
+                                        <li><strong>Status:</strong> {{order.status}}</li>
                                     </ul>
                                 </div>
                             </div>
@@ -64,35 +64,41 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                          {% for item in ordered_products %}
+                                          {% for item in order_products %}
                                             <tr>
-                                                <td>{{item.product.product_name}}
+                                                <td>{{item.product.title}}
                                                   <p class="text-muted small">
                                           					{% if item.variations.all %}
-                                          						{% for i in item.variations.all %}
-                                          							{{ i.variation_category | capfirst }} : {{ i.variation_value | capfirst }} <br>
-                                          						{% endfor %}
+                                          						{% for variant in item.variations.all %}
+                                                                {% if variant.variation_type == 'color' %}
+                                                                {{ variant.variation_type | capfirst }} : {{ variant.color.name | capfirst }} <br />
+                                                                {% elif variant.variation_type == 'size' %}
+                                                                {{ variant.variation_type | capfirst }} : {{ variant.size.name | capfirst }} <br />
+                                                                {% elif variant.variation_type == 'flavor' %}
+                                                                {{ variant.variation_type | capfirst }} : {{ variant.flavor.description | capfirst }} <br />
+                                                                {% endif %}
+                                                                {% endfor %}
                                           					{% endif %}
                                           				</p>
                                                 </td>
                                                 <td class="text-center">{{item.quantity}}</td>
-                                                <td class="text-center">${{item.product_price}} USD</td>
+                                                <td class="text-center">Rs.{{item.product_price }}</td>
                                             </tr>
                                           {% endfor %}
                                         </tbody>
                                         <tfoot>
                                             <tr>
                                                 <th colspan="2" class="text-right">Sub Total:</th>
-                                                <th class="text-center">${{subtotal}} USD</th>
+                                                <th class="text-center">Rs.{{subtotal}}  </th>
                                             </tr>
                                             <tr>
                                                 <th colspan="2" class="text-right">Tax:</th>
-                                                <th class="text-center">${{order.tax}} USD</th>
+                                                <th class="text-center">Rs.{{tax | safe}} </th>
                                             </tr>
 
                                             <tr>
                                                 <th colspan="2" class="text-right">Grand Total:</th>
-                                                <th class="text-center">${{order.order_total}} USD</th>
+                                                <th class="text-center">Rs.{{grand_total}}</th>
                                             </tr>
                                         </tfoot>
                                     </table>

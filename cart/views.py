@@ -20,8 +20,7 @@ def get_or_create_cart(request):
        
     if user:
         cart, created = Cart.objects.get_or_create(
-            cart_id=cart_id,
-            defaults={'user': user}
+            user=user
         )
     else:
         cart, created = Cart.objects.get_or_create(

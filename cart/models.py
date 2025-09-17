@@ -29,7 +29,8 @@ class CartItem(models.Model):
     def price(self):
         if self.variations.exists():
             return sum(variation.price for variation in self.variations.all())
-        return self.product.discounted_price if self.product.discounted_price else self.product.price
+        else:
+            return self.product.discounted_price if self.product.discounted_price else self.product.price
 
     def __str__(self):
         return f"Item {self.product.title} in Cart {self.cart.cart_id}"  

@@ -14,7 +14,7 @@
 <div class="card">
   <div class="card-body">
     <h4 class="card-title mb-4">Billing Address</h4>
-    <form action="#" method="POST">
+    <form action="{% url 'place_order' %}" id="placeOrderForm" method="POST">
       {% csrf_token %}
       <div class="form-row">
         <div class="col form-group">
@@ -52,14 +52,22 @@
           <input type="text" name="city" class="form-control" required>
         </div>
         <div class="col form-group">
-          <label for="">State</label>
-          <input type="text" name="state" class="form-control" required>
+          <label for="">Province</label>
+          <input type="text" name="province" class="form-control" required>
         </div>
         <div class="col form-group">
           <label for="">Country</label>
           <input type="text" name="country" class="form-control" required>
         </div>
         </div>
+        <div class="form-row">
+          <label for="">Payment Method</label>
+          <select name="payment_method" class="form-control" default="Cash On Delivery" required >
+            <option value="Credit Card">Credit Card</option>
+            <option value="Cash On Delivery">Cash On Delivery</option>
+          </select>
+        </div>
+
         <div class="form-row">
           <label for="">Order Note</label>
           <textarea name="order_note" rows="2" class="form-control"></textarea>
@@ -112,12 +120,8 @@
       	</td>
       	<td>
       		<div class="price-wrap">
-      			<var class="price">$ {{ cart_item.sub_total }}</var>
-            <!-- {% if cart_item.variations %}
-            <small class="text-muted"> Rs. {{ cart_item.variations.first.price }} each </small>
-            {% else %}
-      			<small class="text-muted"> Rs. {{ cart_item.product.discounted_price }} each </small>
-            {% endif %} -->
+      			<var class="price">Rs. {{ cart_item.sub_total }}</var>            
+            <small class="text-muted"> Rs. {{ cart_item.price }} each </small>
       		</div> <!-- price-wrap .// -->
       	</td>
 
@@ -132,7 +136,10 @@
       </form>
 		</div> <!-- card-body.// -->
 		</div> <!-- card.// -->
-
+    <div id="loader" style="display:none; text-align:center;">
+          <img src="{% static 'images/Spinner.gif' %}" alt="Loading..." style="width:40px;">
+          <p>Processing order, please wait...</p>
+     </div>     
 
 </aside> <!-- col.// -->
 
@@ -144,5 +151,12 @@
 </div> <!-- container .//  -->
 </section>
 <!-- ========================= SECTION CONTENT END// ========================= -->
+
+<script>
+    document.getElementById('placeOrderForm').addEventListener('submit', function() {
+        document.getElementById('loader').style.display = 'block';
+        document.querySelector('button[type="submit"]').disabled = true;
+    })
+</script>
 
 {% endblock %}

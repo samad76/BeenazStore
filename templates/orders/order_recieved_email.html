@@ -5,5 +5,16 @@ Hi {{user.first_name}},
 YOUR ORDER HAS BEEN RECIEVED
 
 Order Number: {{order.order_number}}
+ORDER_DETAILS
+{{order.first_name}} {{order.last_name}}
+{{order.phone}}
+{{order.email}}
+{{order.address_line_1}}{{order.address_line_2}}{{order.city}}
+{{order.country}}{{order.state}}
+Total Amount: {{order.order_total}}
+Payment Method: {{order.payment_method}}
+Order Note: {{order.order_note}}
 
+We will notify you once it is shipped.
+Thank you for shopping with us!
 {% endautoescape %}
