@@ -54,3 +54,5 @@ class Accounts(AbstractUser):
     
     def has_module_perms(self, app_label):
         return super().has_module_perms(app_label)
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"

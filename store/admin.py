@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, Variation, ProductImages, ColorVariant, SizeVariant, FlavorVariant  
+from .models import Product, Variation, ProductImages, ColorVariant, SizeVariant, FlavorVariant, ReviewRating
 from django.utils.html import format_html   
 from django import forms
 from ckeditor.widgets import CKEditorWidget
@@ -165,3 +165,11 @@ class FlavorVariantAdmin(admin.ModelAdmin):
     list_display = ('name', 'description')
     search_fields = ('name',)
       
+
+
+@admin.register(ReviewRating)
+class ReviewRatingAdmin(admin.ModelAdmin):
+    list_display = ('product', 'user', 'subject', 'rating', 'created_at', 'updated_at')
+    search_fields = ('product__title', 'user__username', 'subject', 'review')
+    list_filter = ('rating', 'created_at')
+    readonly_fields = ('created_at', 'updated_at')

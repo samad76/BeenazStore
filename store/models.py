@@ -4,6 +4,8 @@ from category.models import Category
 from ckeditor.fields import RichTextField
 from django.utils.html import format_html
 from django.core.validators import MinValueValidator, MaxValueValidator
+from accounts.models import Accounts
+from django.db.models import Avg, Count
 
 # Create your models here.
 class Product(models.Model):
@@ -29,6 +31,22 @@ class Product(models.Model):
       
     def get_absolute_url(self):
         return reverse('product_detail', args=[self.category.slug, self.slug])
+    
+    def average_rating(self):
+        reviews = ReviewRating.objects.filter(product=self, status=True).aggregate(Avg('rating'))
+        return reviews['rating__avg'] if reviews['rating__avg'] is not None else 0
+    average_rating.short_description = 'Average Rating'
+    def review_count(self):
+        return ReviewRating.objects.filter(product=self, status=True).count()
+    review_count.short_description = 'Review Count'
+    def order_count(self):
+        return self.orderproduct_set.aggregate(count=Count('id'))['count']
+    def image_tag(self):
+        main_image = self.images.first()
+        if main_image and main_image.image:
+            return format_html('<img src="{}" style="height: 50px;"/>', main_image.image.url)
+        return "No Image"
+    image_tag.short_description = 'Preview'
 
     def __str__(self):
         return self.title
@@ -121,8 +139,20 @@ class Variation(models.Model):
     
 
 
+class ReviewRating(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
+    user = models.ForeignKey(Accounts, on_delete=models.CASCADE)
+    subject = models.CharField(max_length=100, blank=True)
+    review = models.TextField(max_length=500, blank=True)
+    rating = models.PositiveIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    ip = models.GenericIPAddressField(blank=True, null=True)
+    status = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
-
+    def __str__(self):
+        return self.subject 
+    
 
 
 
