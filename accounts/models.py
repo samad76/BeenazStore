@@ -56,3 +56,26 @@ class Accounts(AbstractUser):
         return super().has_module_perms(app_label)
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
+
+ProvinceChoice=(
+    ('Sindh', 'Sindh'),
+    ('Punjab', 'Punjab'),
+    ('Balochistan', 'Balochistan'),
+    ('Khyber Pakhtunkhwa', 'Khyber Pakhtunkhwa'),
+    ('Gilgit-Baltistan', 'Gilgit-Baltistan'),
+    ('Azad Jammu and Kashmir', 'Azad Jammu and Kashmir'),
+)
+class userProfile(models.Model):
+    user = models.OneToOneField(Accounts, on_delete=models.CASCADE)
+    address_line_1 = models.CharField(blank=True, max_length=100)
+    address_line_2 = models.CharField(blank=True, max_length=100)
+    profile_picture = models.ImageField(blank=True, upload_to='userprofile')
+    city = models.CharField(blank=True, max_length=20)
+    province = models.CharField(blank=True, max_length=100, choices=ProvinceChoice)
+    country = models.CharField(blank=True, max_length=20)
+
+    def __str__(self):
+        return self.user.email
+
+    def full_address(self):
+        return f"{self.address_line_1} {self.address_line_2}"

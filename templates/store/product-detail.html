@@ -14,12 +14,12 @@
 <article class="gallery-wrap"> 
 	<div class="img-big-wrap mainImage">
 		{% if single_product.images.first %}
-			<center><img src="{{ single_product.images.first.image.url }}" alt="{{ single_product.images.first.alt_text }}"></center>
+			<center><img id="mainImage" src="{{ single_product.images.first.image.url }}" alt="{{ single_product.images.first.alt_text }}"></center>
 		{% else %}
 			<center><img src="{% static 'images/default-product.png' %}" alt="No image available"></center>	
 	   {% endif %}
 	</div> <!-- img-big-wrap.// -->
-	<ul class="img-thumbnail">
+	<ul class="thumb">
 		<li>
 			{% for i in single_product_images %}
     		<a href="{{ i.image.url }}" class="img-fluid img-xs img-thumbnail" target="mainImage">
@@ -147,54 +147,7 @@ document.addEventListener('DOMContentLoaded', function () {
 </article> <!-- product-info-aside .// -->
 </form>
 
- <!-- {% if single_product.is_variant %}	```
-<script>
-	
-document.addEventListener('DOMContentLoaded', function() {
-   
-        var addToCartBtn = document.getElementById('addToCartBtn');
-        var form = document.getElementById('addToCartForm');
-        var variantMessage = document.getElementById('variantMessage');
 
-        function checkVariantSelected() {
-            var colorSelected = document.querySelectorAll('input[name="color"]:checked');
-            var sizeSelected = document.querySelectorAll('input[name="size"]:checked');
-            var flavorSelected = document.querySelectorAll('input[name="flavor"]:checked');
-			console.log(flavorSelected);
-            // If any variant group exists, require selection
-            var requireColor = document.querySelectorAll('input[name="color"]');
-            var requireSize = document.querySelectorAll('input[name="size"]');
-            var requireFlavor = document.querySelectorAll('input[name="flavor"]');
-            var valid = true;
-            if (requireColor.length > 0 && colorSelected.length === 0) valid = false;
-            if (requireSize.length > 0 && sizeSelected.length === 0) valid = false;
-            if (requireFlavor.length > 0 && flavorSelected.length === 0) valid = false;
-            return valid;
-        }
-
-        function toggleButton() {
-            if (checkVariantSelected()) {
-			    addToCartBtn.disabled = false;
-                variantMessage.style.display = 'none';
-            } else {
-                addToCartBtn.disabled = true;
-            }
-        }
-
-        form.addEventListener('change', toggleButton);
-        form.addEventListener('submit', function(e) {
-            if (!checkVariantSelected()) {
-                e.preventDefault();
-                variantMessage.style.display = 'block';
-            }
-        });
-
-        // Initial check
-        toggleButton();
-    
-});
-</script>	
-{% endif %}		 -->
 		</main> <!-- col.// -->
 	</div> <!-- row.// -->
 </div> <!-- card.// -->

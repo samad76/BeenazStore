@@ -5,6 +5,7 @@ from django import forms
 from ckeditor.widgets import CKEditorWidget
 from import_export.admin import ExportMixin
 from import_export import resources
+import admin_thumbnails
 
 
 class InStockFilter(admin.SimpleListFilter):
@@ -65,10 +66,12 @@ class ProductAdminForm(forms.ModelForm):
         model = Product
         fields = '__all__'
 
+
+@admin_thumbnails.thumbnail('image')
 class ProductImageInline(admin.TabularInline):
     model = ProductImages
     extra = 1
-    fields = ['image', 'alt_text', 'uploaded_at']
+    fields = ['image_thumbnail', 'alt_text', 'uploaded_at']
     readonly_fields = ('uploaded_at',)
 
 
@@ -115,12 +118,9 @@ class VariationAdmin(admin.ModelAdmin, ExportMixin):
 
 
 @admin.register(ProductImages)
+@admin_thumbnails.thumbnail('image')
 class ProductImagesAdmin(admin.ModelAdmin):
-    def image_tag(self, obj):
-        if obj.image:
-            return format_html('<img src="{}" style="width: 50px; height: auto;" />', obj.image.url)
-        return "No Image"
-    list_display = ('product', 'image_tag', 'alt_text')
+    list_display = ('product', 'image_thumbnail', 'alt_text')
     search_fields = ('product__title', 'alt_text')
     readonly_fields = ('uploaded_at',)
 
